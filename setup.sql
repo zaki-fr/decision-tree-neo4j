@@ -1,0 +1,22 @@
+CREATE (tree:Tree { id: 'funeral' })
+CREATE (good_man_rule:Rule { name: 'Was Lil Jon a good man?', parameter_names: 'answer_1', parameter_types:'String', script:'switch (answer_1) { case \"yeah\": return \"OPTION_1\"; case \"what\": return \"OPTION_2\"; case \"okay\": return \"OPTION_3\"; default: return \"UNKNOWN\"; }' })
+CREATE (good_man_two_rule:Rule { name: 'I said, was he a good man?', parameter_names: 'answer_2', parameter_types:'String', script:'switch (answer_2) { case \"yeah\": return \"OPTION_1\"; case \"what\": return \"OPTION_2\"; case \"okay\": return \"OPTION_3\"; default: return \"UNKNOWN\"; }' })
+CREATE (rest_in_peace_rule:Rule { name: 'May he rest in peace', parameter_names: 'answer_3', parameter_types:'String', script:'switch (answer_3) { case \"yeah\": return \"OPTION_1\"; case \"what\": return \"OPTION_2\"; case \"okay\": return \"OPTION_3\"; default: return \"UNKNOWN\"; } ' })
+CREATE (answer_correct:Answer { id: 'correct'})
+CREATE (answer_incorrect:Answer { id: 'incorrect'})
+CREATE (answer_unknown:Answer { id: 'unknown'})
+CREATE (tree)-[:HAS]->(good_man_rule)
+CREATE (good_man_rule)-[:OPTION_1]->(answer_incorrect)
+CREATE (good_man_rule)-[:OPTION_2]->(good_man_two_rule)
+CREATE (good_man_rule)-[:OPTION_3]->(answer_incorrect)
+CREATE (good_man_rule)-[:UNKNOWN]->(answer_unknown)
+
+CREATE (good_man_two_rule)-[:OPTION_1]->(rest_in_peace_rule)
+CREATE (good_man_two_rule)-[:OPTION_2]->(answer_incorrect)
+CREATE (good_man_two_rule)-[:OPTION_3]->(answer_incorrect)
+CREATE (good_man_two_rule)-[:UNKNOWN]->(answer_unknown)
+
+CREATE (rest_in_peace_rule)-[:OPTION_1]->(answer_incorrect)
+CREATE (rest_in_peace_rule)-[:OPTION_2]->(answer_incorrect)
+CREATE (rest_in_peace_rule)-[:OPTION_3]->(answer_correct)
+CREATE (rest_in_peace_rule)-[:UNKNOWN]->(answer_unknown);
