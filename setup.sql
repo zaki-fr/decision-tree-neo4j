@@ -1,11 +1,49 @@
-CREATE (cmd08:DP { id: 'CMD08_DP', step: 1 })
-CREATE (cmd08_rule:Rule { name: 'Is this diagnostic has a positive result?', parameter_names: 'result', parameter_types:'String', script:'switch (result) { case \"POSITIVE\": return \"PASSED\"; case \"NEGATIVE\": return \"FAILED\"; case \"PEDNING\": return \"IN_WAIT\"; default: return \"CANCELED\"; }' })
-CREATE (cmd08)-[:HAS]->(cmd08_rule)
-CREATE (cmd08_rule)-[:PASSED]->(cmd08a)
-CREATE (cmd08_rule)-[:FAILED]->(cmd08ds)
-CREATE (cmd08_rule)-[:IN_WAIT]->(cmd08w)
-CREATE (cmd08_rule)-[:CANCELED]->(cmd08c)
-CREATE (cmd08a:A { id: 'CMD08_A', step: 2})
-CREATE (cmd08ds:DS { id: 'CMD08_DS', step: 2})
-CREATE (cmd08w:STATUS { id: 'CMD08_WAIT', status: 'IN_WAIT'})
-CREATE (cmd08c:STATUS { id: 'CMD08_CANCELED', status: 'CANCELED'})
+CALL com.maxdemarzi.schema.generate;
+
+CREATE (tree:Tree { id: 'CMD08' })
+CREATE (cmd08_rule:Rule { name: 'Acte op. de la CMD 08', parameter_names: 'answer_cm08', parameter_types:'String', script:'switch (answer_cm08) { case \"POSITIVE\": return \"PASSED\"; case \"NEGATIVE\": return \"FAILED\"; case \"PENDING\": return \"IN_WAIT\"; default: return \"UNKNOWN\"; }' })
+CREATE (dp007_rule:Rule { name: 'Infection ostéoarticulaire (D-077)', parameter_names: 'answer_dp007', parameter_types:'String', script:'switch (answer_dp007) { case \"POSITIVE\": return \"PASSED\"; case \"NEGATIVE\": return \"FAILED\"; case \"PENDING\": return \"IN_WAIT\"; default: return \"UNKNOWN\"; }' })
+CREATE (a368_rule:Rule { name: 'Itv. maj. pour infection ostéoarticulaire (A-368)', parameter_names: 'answer_a368', parameter_types:'String', script:'switch (answer_a368) { case \"POSITIVE\": return \"PASSED\"; case \"NEGATIVE\": return \"FAILED\"; case \"PENDING\": return \"IN_WAIT\"; default: return \"UNKNOWN\"; } ' })
+CREATE (a289_rule:Rule { name: 'Traction continue ou réduction progressive : hanche ou fémur (A-289)', parameter_names: 'answer_a289', parameter_types:'String', script:'switch (answer_a289) { case \"POSITIVE\": return \"PASSED\"; case \"NEGATIVE\": return \"FAILED\"; case \"PENDING\": return \"IN_WAIT\"; default: return \"UNKNOWN\"; } ' })
+CREATE (ghm_08C61:Answer { id: 'GHM 08C61'})
+CREATE (ghm_08C62:Answer { id: 'GHM 08C62'})
+CREATE (ghm_08K04:Answer { id: 'GHM 08K04'})
+CREATE (dp_007:Answer { id: 'DP007'})
+
+CREATE (answer_continue:Answer { id: 'continue'})
+CREATE (answer_inwait:Answer { id: 'inwait'})
+CREATE (answer_unknown:Answer { id: 'unknown'})
+CREATE (tree)-[:HAS]->(cmd08_rule)
+CREATE (dp_007)-[:HAS]->(dp007_rule)
+CREATE (cmd08_rule)-[:PASSED]->(dp_007)
+CREATE (cmd08_rule)-[:FAILED]->(a289_rule)
+CREATE (cmd08_rule)-[:IN_WAIT]->(answer_inwait)
+CREATE (cmd08_rule)-[:UNKNOWN]->(answer_unknown)
+
+CREATE (dp007_rule)-[:PASSED]->(a368_rule)
+CREATE (dp007_rule)-[:FAILED]->(answer_inwait)
+CREATE (dp007_rule)-[:IN_WAIT]->(answer_inwait)
+CREATE (dp007_rule)-[:UNKNOWN]->(answer_unknown)
+
+CREATE (a368_rule)-[:PASSED]->(ghm_08C61)
+CREATE (a368_rule)-[:FAILED]->(ghm_08C62)
+CREATE (a368_rule)-[:IN_WAIT]->(answer_inwait)
+CREATE (a368_rule)-[:UNKNOWN]->(answer_unknown)
+
+CREATE (a289_rule)-[:PASSED]->(ghm_08K04)
+CREATE (a289_rule)-[:FAILED]->(answer_continue)
+CREATE (a289_rule)-[:IN_WAIT]->(answer_inwait)
+CREATE (a289_rule)-[:UNKNOWN]->(answer_unknown);
+
+Get the relationships, path and nodes:
+
+MATCH (tree:Tree { id: 'CMD08' })-[rels]-(nodes) return rels, tree, nodes
+CALL com.maxdemarzi.traverse.decision_tree_two('CMD08', {answer_cm08:'POSITIVE'}) yield path return path
+
+MATCH (a:Answer { id: 'DP007' })-[rels]-(nodes) return rels, a, nodes
+CALL com.maxdemarzi.traverse.decision_tree_two('CMD08', {answer_cm08:'POSITIVE', answer_dp007:'NEGATIVE'}) yield path return path
+
+CALL com.maxdemarzi.traverse.decision_tree_two('CMD08', {answer_cm08:'POSITIVE', answer_dp007:'POSITIVE', answer_a368:'POSITIVE'}) yield path return path
+CALL com.maxdemarzi.traverse.decision_tree_two('CMD08', {answer_cm08:'NEGATIVE', answer_a289:'POSITIVE'}) yield path return path
+CALL com.maxdemarzi.traverse.decision_tree_two('CMD08', {answer_cm08:'NEGATIVE', answer_a289:'NEGATIVE'}) yield path return path
+CALL com.maxdemarzi.traverse.decision_tree_two('CMD08', {answer_cm08:'NEGATIVE', answer_a289:'PENDING'}) yield path return path
