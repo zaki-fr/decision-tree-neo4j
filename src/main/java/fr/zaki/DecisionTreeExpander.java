@@ -1,7 +1,7 @@
-package com.maxdemarzi;
+package fr.zaki;
 
-import com.maxdemarzi.schema.Labels;
-import com.maxdemarzi.schema.RelationshipTypes;
+import fr.zaki.schema.Labels;
+import fr.zaki.schema.RelationshipTypes;
 import org.codehaus.janino.ExpressionEvaluator;
 import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.traversal.BranchState;
@@ -20,8 +20,8 @@ public class DecisionTreeExpander implements PathExpander {
 
     @Override
     public Iterable<Relationship> expand(Path path, BranchState branchState) {
-        // If we get to an Answer stop traversing, we found a valid path.
-        if (path.endNode().hasLabel(Labels.Answer)) {
+        // If we get to an Answer or Transit, stop traversing, we found a valid path.
+        if (path.endNode().hasLabel(Labels.Answer) || path.endNode().hasLabel(Labels.Transit)) {
             return Collections.emptyList();
         }
 

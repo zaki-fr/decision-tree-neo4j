@@ -27,13 +27,13 @@ Download and Copy two additional files to your Neo4j plugins directory:
 
 Edit your Neo4j/conf/neo4j.conf file by adding this line:
 
-    dbms.security.procedures.unrestricted=com.maxdemarzi.*    
+    dbms.security.procedures.unrestricted=fr.zaki.*    
 
 Restart your Neo4j Server.
 
 Create the Schema by running this stored procedure:
 
-    CALL com.maxdemarzi.schema.generate
+    CALL fr.zaki.schema.generate
     
 Create some test data:
 
@@ -50,9 +50,9 @@ Create some test data:
     
 Try it:
 
-    CALL com.maxdemarzi.traverse.decision_tree('bar entrance', {gender:'male', age:'20'}) yield path return path;
-    CALL com.maxdemarzi.traverse.decision_tree('bar entrance', {gender:'female', age:'19'}) yield path return path;
-    CALL com.maxdemarzi.traverse.decision_tree('bar entrance', {gender:'male', age:'23'}) yield path return path;     
+    CALL fr.zaki.traverse.decision_tree('bar entrance', {gender:'male', age:'20'}) yield path return path;
+    CALL fr.zaki.traverse.decision_tree('bar entrance', {gender:'female', age:'19'}) yield path return path;
+    CALL fr.zaki.traverse.decision_tree('bar entrance', {gender:'male', age:'23'}) yield path return path;     
     
     
 Evaluating Scripts instead of expressions.
@@ -86,6 +86,6 @@ Create some test data:
 Try it:
 
 
-    CALL com.maxdemarzi.traverse.decision_tree_two('funeral', {answer_1:'yeah', answer_2:'yeah', answer_3:'yeah'}) yield path return path    
-    CALL com.maxdemarzi.traverse.decision_tree_two('funeral', {answer_1:'what', answer_2:'', answer_3:''}) yield path return path    
-    CALL com.maxdemarzi.traverse.decision_tree_two('funeral', {answer_1:'what', answer_2:'yeah', answer_3:'okay'}) yield path return path
+    CALL fr.zaki.traverse.decision_tree_script('funeral', {answer_1:'yeah', answer_2:'yeah', answer_3:'yeah'}) yield path return path    
+    CALL fr.zaki.traverse.decision_tree_script('funeral', {answer_1:'what', answer_2:'', answer_3:''}) yield path return path    
+    CALL fr.zaki.traverse.decision_tree_script('funeral', {answer_1:'what', answer_2:'yeah', answer_3:'okay'}) yield path return path

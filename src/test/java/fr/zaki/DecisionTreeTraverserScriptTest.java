@@ -1,4 +1,4 @@
-package com.maxdemarzi;
+package fr.zaki;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Rule;
@@ -13,7 +13,7 @@ import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static junit.framework.TestCase.assertEquals;
 
-public class DecisionTreeTraverserTwoTest {
+public class DecisionTreeTraverserScriptTest {
     private static final ObjectMapper mapper = new ObjectMapper();
 
     @Rule
@@ -32,7 +32,7 @@ public class DecisionTreeTraverserTwoTest {
 
     private static final Map QUERY1 =
             singletonMap("statements", singletonList(singletonMap("statement",
-                    "CALL com.maxdemarzi.traverse.decision_tree_two('funeral', {answer_1:'yeah', answer_2:'yeah', answer_3:'yeah'}) yield path return path")));
+                    "CALL fr.zaki.traverse.decision_tree_script('funeral', {answer_1:'yeah', answer_2:'yeah', answer_3:'yeah'}) yield path return path")));
 
     @Test
     public void testTraversalTwo() throws Exception {
@@ -45,7 +45,7 @@ public class DecisionTreeTraverserTwoTest {
 
     private static final Map QUERY2 =
             singletonMap("statements", singletonList(singletonMap("statement",
-                    "CALL com.maxdemarzi.traverse.decision_tree_two('funeral', {answer_1:'what', answer_2:'', answer_3:''}) yield path return path")));
+                    "CALL fr.zaki.traverse.decision_tree_script('funeral', {answer_1:'what', answer_2:'', answer_3:''}) yield path return path")));
 
     @Test
     public void testTraversalThree() throws Exception {
@@ -53,12 +53,12 @@ public class DecisionTreeTraverserTwoTest {
         int count = response.get("results").get(0).get("data").size();
         assertEquals(1, count);
         ArrayList<Map> path1 = mapper.convertValue(response.get("results").get(0).get("data").get(0).get("row").get(0), ArrayList.class);
-        assertEquals("correct", path1.get(path1.size() - 1).get("id"));
+        assertEquals("incorrect", path1.get(path1.size() - 1).get("id"));
     }
 
     private static final Map QUERY3 =
             singletonMap("statements", singletonList(singletonMap("statement",
-                    "CALL com.maxdemarzi.traverse.decision_tree_two('funeral', {answer_1:'what', answer_2:'yeah', answer_3:'okay'}) yield path return path")));
+                    "CALL fr.zaki.traverse.decision_tree_script('funeral', {answer_1:'yeah', answer_2:'yeah', answer_3:'okay'}) yield path return path")));
 
 
     private static final String MODEL_STATEMENT =
@@ -66,10 +66,12 @@ public class DecisionTreeTraverserTwoTest {
                     "CREATE (good_man_rule:Rule { name: 'Was Lil Jon a good man?', parameter_names: 'answer_1', parameter_types:'String', script:'switch (answer_1) { case \"yeah\": return \"OPTION_1\"; case \"what\": return \"OPTION_2\"; case \"okay\": return \"OPTION_3\"; default: return \"UNKNOWN\"; }' })" +
                     "CREATE (good_man_two_rule:Rule { name: 'I said, was he a good man?', parameter_names: 'answer_2', parameter_types:'String', script:'switch (answer_2) { case \"yeah\": return \"OPTION_1\"; case \"what\": return \"OPTION_2\"; case \"okay\": return \"OPTION_3\"; default: return \"UNKNOWN\"; }' })" +
                     "CREATE (rest_in_peace_rule:Rule { name: 'May he rest in peace', parameter_names: 'answer_3', parameter_types:'String', script:'switch (answer_3) { case \"yeah\": return \"OPTION_1\"; case \"what\": return \"OPTION_2\"; case \"okay\": return \"OPTION_3\"; default: return \"UNKNOWN\"; } ' })" +
-                    "CREATE (answer_correct:Answer { id: 'correct'})" +
-                    "CREATE (answer_incorrect:Answer { id: 'incorrect'})" +
+                    "CREATE (answer_correct:Answer { id: 'correct', parameter_names: 'answer_2', parameter_types:'String'})" +
+                    "CREATE (answer_incorrect:Answer { id: 'incorrect', parameter_names: 'answer_3', parameter_types:'String'})" +
                     "CREATE (answer_unknown:Answer { id: 'unknown'})" +
                     "CREATE (tree)-[:HAS]->(good_man_rule)" +
+                    "CREATE (answer_correct)-[:HAS]->(rest_in_peace_rule)" +
+                    "CREATE (answer_incorrect)-[:HAS]->(rest_in_peace_rule)" +
                     "CREATE (good_man_rule)-[:OPTION_1]->(answer_incorrect)" +
                     "CREATE (good_man_rule)-[:OPTION_2]->(good_man_two_rule)" +
                     "CREATE (good_man_rule)-[:OPTION_3]->(answer_incorrect)" +

@@ -1,4 +1,4 @@
-package com.maxdemarzi.results;
+package fr.zaki.results;
 
 import org.neo4j.graphdb.Node;
 

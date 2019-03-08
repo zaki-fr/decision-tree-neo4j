@@ -1,4 +1,4 @@
-package com.maxdemarzi.schema;
+package fr.zaki.schema;
 
 import org.neo4j.graphdb.RelationshipType;
 

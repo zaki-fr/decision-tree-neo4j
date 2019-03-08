@@ -1,4 +1,4 @@
-package com.maxdemarzi;
+package fr.zaki;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Rule;
@@ -33,7 +33,7 @@ public class DecisionTreeTraverserTest {
 
     private static final Map QUERY1 =
             singletonMap("statements", singletonList(singletonMap("statement",
-                    "CALL com.maxdemarzi.traverse.decision_tree('bar entrance', {gender:'male', age:'20'}) yield path return path")));
+                    "CALL fr.zaki.traverse.decision_tree('bar entrance', {gender:'male', age:'20'}) yield path return path")));
 
     @Test
     public void testTraversalTwo() throws Exception {
@@ -46,7 +46,7 @@ public class DecisionTreeTraverserTest {
 
     private static final Map QUERY2 =
             singletonMap("statements", singletonList(singletonMap("statement",
-                    "CALL com.maxdemarzi.traverse.decision_tree('bar entrance', {gender:'female', age:'19'}) yield path return path")));
+                    "CALL fr.zaki.traverse.decision_tree('bar entrance', {gender:'female', age:'19'}) yield path return path")));
 
     @Test
     public void testTraversalThree() throws Exception {
@@ -59,15 +59,15 @@ public class DecisionTreeTraverserTest {
 
     private static final Map QUERY3 =
             singletonMap("statements", singletonList(singletonMap("statement",
-                    "CALL com.maxdemarzi.traverse.decision_tree('bar entrance', {gender:'male', age:'23'}) yield path return path")));
+                    "CALL fr.zaki.traverse.decision_tree('bar entrance', {gender:'male', age:'23'}) yield path return path")));
 
 
     private static final String MODEL_STATEMENT =
             "CREATE (tree:Tree { id: 'bar entrance' })" +
                     "CREATE (over21_rule:Rule { parameter_names: 'age', parameter_types:'int', expression:'age >= 21' })" +
                     "CREATE (gender_rule:Rule { parameter_names: 'age,gender', parameter_types:'int,String', expression:'(age >= 18) && gender.equals(\"female\")' })" +
-                    "CREATE (answer_yes:Answer { id: 'yes'})" +
-                    "CREATE (answer_no:Answer { id: 'no'})" +
+                    "CREATE (answer_yes:Answer { id: 'yes' })" +
+                    "CREATE (answer_no:Answer { id: 'no' })" +
                     "CREATE (tree)-[:HAS]->(over21_rule)" +
                     "CREATE (over21_rule)-[:IS_TRUE]->(answer_yes)" +
                     "CREATE (over21_rule)-[:IS_FALSE]->(gender_rule)" +

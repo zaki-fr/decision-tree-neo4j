@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.maxdemarzi;
+package fr.zaki;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
