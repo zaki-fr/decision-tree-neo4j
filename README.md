@@ -1,4 +1,4 @@
-* This project is branched from https://github.com/maxdemarzi/decision_trees_with_rules *
+*** This project is branched from https://github.com/maxdemarzi/decision_trees_with_rules ***
 
 # Decision Trees With Rules
 POC Decision Tree traverser with rules
