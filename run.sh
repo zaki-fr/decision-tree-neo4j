@@ -1,5 +1,5 @@
 #!/bin/bash
-DOCKER_BUILD=${1-"NO"}
+DOCKER_BUILD=${1-"YES"}
 if [ "$DOCKER_BUILD" = "YES" ]; then
     docker build . -t decision-tree-core
 fi
