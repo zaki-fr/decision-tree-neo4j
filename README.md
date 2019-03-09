@@ -1,5 +1,7 @@
 # Decision Trees With Rules
 
+[![Build Status](https://travis-ci.org/zaki-fr/decision-tree-core.svg?branch=master)](https://travis-ci.org/zaki-fr/decision-tree-core)
+
 ***This project is branched from https://github.com/maxdemarzi/decision_trees_with_rules***
 
 Decision Tree traverser with rules by expression and script
