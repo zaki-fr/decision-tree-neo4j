@@ -50,35 +50,62 @@ Try it:
     
 Evaluating Scripts instead of expressions.
 
-Create some test data:
+Create some test data with stopped condition node:
 
     CREATE (tree:Tree { id: 'funeral' })
     CREATE (good_man_rule:Rule { name: 'Was Lil Jon a good man?', parameters: 'answer_1', types:'String', script:'switch (answer_1) { case \"yeah\": return \"OPTION_1\"; case \"what\": return \"OPTION_2\"; case \"okay\": return \"OPTION_3\"; default: return \"UNKNOWN\"; }' })
     CREATE (good_man_two_rule:Rule { name: 'I said, was he a good man?', parameters: 'answer_2', types:'String', script:'switch (answer_2) { case \"yeah\": return \"OPTION_1\"; case \"what\": return \"OPTION_2\"; case \"okay\": return \"OPTION_3\"; default: return \"UNKNOWN\"; }' })
     CREATE (rest_in_peace_rule:Rule { name: 'May he rest in peace', parameters: 'answer_3', types:'String', script:'switch (answer_3) { case \"yeah\": return \"OPTION_1\"; case \"what\": return \"OPTION_2\"; case \"okay\": return \"OPTION_3\"; default: return \"UNKNOWN\"; } ' })
-    CREATE (answer_correct:Node { id: 'correct'})
-    CREATE (answer_incorrect:Node { id: 'incorrect'})
+
+    
+    CREATE (answer_correct:Node { id: 'correct', parameters: 'answer_2', types:'String'})
+    CREATE (answer_incorrect:Node { id: 'incorrect' })
+
+A stopable Node is a Node with `parameters` field indicates to passthrough it if its `values` are presented
+
+    CREATE (answer_stop:Node { id: 'stop', parameters: 'answer_4', types:'String' })
+
+If the `answer_4` is not set, the path will be stopped at the `answer_stop:Node`, if set, the next `another_rule` rule will be executed. It's necessary to declare `answer_stop:Node`-[:HAS]-`another_rule`.
+
+    CREATE (another_rule:Rule { name: 'Yet another rule', parameters: 'answer_4', types:'String', script:'switch (answer_4) { case \"yeah\": return \"OPTION_1\"; case \"what\": return \"OPTION_2\"; case \"okay\": return \"OPTION_3\"; default: return \"UNKNOWN\"; } ' })
+
     CREATE (answer_unknown:Node { id: 'unknown'})
+    
     CREATE (tree)-[:HAS]->(good_man_rule)
-    CREATE (good_man_rule)-[:OPTION_1]->(answer_incorrect)
+    CREATE (answer_stop)-[:HAS]->(another_rule)
+
+    CREATE (good_man_rule)-[:OPTION_1]->(answer_stop)
     CREATE (good_man_rule)-[:OPTION_2]->(good_man_two_rule)
     CREATE (good_man_rule)-[:OPTION_3]->(answer_incorrect)
     CREATE (good_man_rule)-[:UNKNOWN]->(answer_unknown)
-    
+
     CREATE (good_man_two_rule)-[:OPTION_1]->(rest_in_peace_rule)
     CREATE (good_man_two_rule)-[:OPTION_2]->(answer_incorrect)
     CREATE (good_man_two_rule)-[:OPTION_3]->(answer_incorrect)
     CREATE (good_man_two_rule)-[:UNKNOWN]->(answer_unknown)
-    
+
     CREATE (rest_in_peace_rule)-[:OPTION_1]->(answer_incorrect)
     CREATE (rest_in_peace_rule)-[:OPTION_2]->(answer_incorrect)
     CREATE (rest_in_peace_rule)-[:OPTION_3]->(answer_correct)
-    CREATE (rest_in_peace_rule)-[:UNKNOWN]->(answer_unknown);    
+    CREATE (rest_in_peace_rule)-[:UNKNOWN]->(answer_unknown)
 
+    CREATE (another_rule)-[:OPTION_1]->(answer_incorrect)
+    CREATE (another_rule)-[:OPTION_2]->(answer_incorrect)
+    CREATE (another_rule)-[:OPTION_3]->(answer_correct)
+    CREATE (another_rule)-[:UNKNOWN]->(answer_unknown);  
+
+Test Traversal With Stopped Condition: it will end at the node with a `stop` node:
     
-Try it:
+    CALL fr.zaki.traverse.DecisionTreeScript('funeral', {answer_1:'yeah', answer_2:'yeah'}) yield path return path;
 
+Test Traversal With Continue Rule After Stopped resulting an `unknown` node:
 
-    CALL fr.zaki.traverse.DecisionTreeScript('funeral', {answer_1:'yeah', answer_2:'yeah', answer_3:'yeah'}) yield path return path    
-    CALL fr.zaki.traverse.DecisionTreeScript('funeral', {answer_1:'what', answer_2:'', answer_3:''}) yield path return path    
-    CALL fr.zaki.traverse.DecisionTreeScript('funeral', {answer_1:'what', answer_2:'yeah', answer_3:'okay'}) yield path return path
+    CALL fr.zaki.traverse.DecisionTreeScript('funeral', {answer_1:'what', answer_2:'', answer_3:''}) yield path return path;
+
+Test Traversal With Continue Rule After Stopped with a `correct` node:
+
+    CALL fr.zaki.traverse.DecisionTreeScript('funeral', {answer_1:'yeah', answer_2:'yeah', answer_3:'okay', answer_4:'okay'}) yield path return path;
+
+Test Traversal With Continue Rule After Stopped resulting an `incorrect` node:
+
+    CALL fr.zaki.traverse.DecisionTreeScript('funeral', {answer_1:'yeah', answer_2:'yeah', answer_3:'okay', answer_4:'nok'}) yield path return path;
