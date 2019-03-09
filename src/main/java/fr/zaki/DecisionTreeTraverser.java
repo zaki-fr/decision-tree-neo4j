@@ -1,7 +1,7 @@
-package com.maxdemarzi;
+package fr.zaki;
 
-import com.maxdemarzi.results.PathResult;
-import com.maxdemarzi.schema.Labels;
+import fr.zaki.results.PathResult;
+import fr.zaki.schema.Labels;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.traversal.TraversalDescription;
@@ -25,8 +25,8 @@ public class DecisionTreeTraverser {
 
     private static final DecisionTreeEvaluator decisionTreeEvaluator = new DecisionTreeEvaluator();
 
-    @Procedure(name = "com.maxdemarzi.traverse.decision_tree", mode = Mode.READ)
-    @Description("CALL com.maxdemarzi.traverse.decision_tree(tree, facts) - traverse decision tree")
+    @Procedure(name = "fr.zaki.traverse.DecisionTreeExpression", mode = Mode.READ)
+    @Description("CALL fr.zaki.traverse.DecisionTreeExpression(tree, facts) - traverse decision tree")
     public Stream<PathResult> traverseDecisionTree(@Name("tree") String id, @Name("facts") Map<String, String> facts) throws IOException {
         // Which Decision Tree are we interested in?
         Node tree = db.findNode(Labels.Tree, "id", id);
@@ -38,16 +38,19 @@ public class DecisionTreeTraverser {
     }
 
     private Stream<PathResult> decisionPath(Node tree, Map<String, String> facts) {
+        DecisionTreeExpanderExpression decisionTreeExpander = new DecisionTreeExpanderExpression();
+        decisionTreeExpander.setParameters(facts, log);
+        decisionTreeEvaluator.setParameters(facts, log);
         TraversalDescription myTraversal = db.traversalDescription()
                 .depthFirst()
-                .expand(new DecisionTreeExpander(facts))
+                .expand(decisionTreeExpander)
                 .evaluator(decisionTreeEvaluator);
 
         return myTraversal.traverse(tree).stream().map(PathResult::new);
     }
 
-    @Procedure(name = "com.maxdemarzi.traverse.decision_tree_two", mode = Mode.READ)
-    @Description("CALL com.maxdemarzi.traverse.decision_tree_two(tree, facts) - traverse decision tree")
+    @Procedure(name = "fr.zaki.traverse.DecisionTreeScript", mode = Mode.READ)
+    @Description("CALL fr.zaki.traverse.DecisionTreeScript(tree, facts) - traverse decision tree")
     public Stream<PathResult> traverseDecisionTreeTwo(@Name("tree") String id, @Name("facts") Map<String, String> facts) throws IOException {
         // Which Decision Tree are we interested in?
         Node tree = db.findNode(Labels.Tree, "id", id);
@@ -59,9 +62,12 @@ public class DecisionTreeTraverser {
     }
 
     private Stream<PathResult> decisionPathTwo(Node tree, Map<String, String> facts) {
+        DecisionTreeExpanderScript decisionTreeExpanderScript = new DecisionTreeExpanderScript();
+        decisionTreeExpanderScript.setParameters(facts, log);
+        decisionTreeEvaluator.setParameters(facts, log);
         TraversalDescription myTraversal = db.traversalDescription()
                 .depthFirst()
-                .expand(new DecisionTreeExpanderTwo(facts, log))
+                .expand(decisionTreeExpanderScript)
                 .evaluator(decisionTreeEvaluator);
 
         return myTraversal.traverse(tree).stream().map(PathResult::new);

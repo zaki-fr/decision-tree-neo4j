@@ -1,7 +1,7 @@
-package com.maxdemarzi;
+package fr.zaki;
 
-import com.maxdemarzi.schema.Labels;
-import com.maxdemarzi.schema.RelationshipTypes;
+import fr.zaki.schema.Labels;
+import fr.zaki.schema.RelationshipTypes;
 import org.codehaus.janino.ExpressionEvaluator;
 import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.traversal.BranchState;
@@ -9,19 +9,17 @@ import org.neo4j.graphdb.traversal.BranchState;
 import java.util.Collections;
 import java.util.Map;
 
-public class DecisionTreeExpander implements PathExpander {
-    private Map<String, String> facts;
+public class DecisionTreeExpanderExpression extends DecisionTreeBase implements PathExpander<Object> {
     private ExpressionEvaluator ee = new ExpressionEvaluator();
 
-    public DecisionTreeExpander(Map<String, String> facts) {
-        this.facts = facts;
+    public DecisionTreeExpanderExpression() {
         ee.setExpressionType(boolean.class);
     }
 
     @Override
-    public Iterable<Relationship> expand(Path path, BranchState branchState) {
-        // If we get to an Answer stop traversing, we found a valid path.
-        if (path.endNode().hasLabel(Labels.Answer)) {
+    public Iterable<Relationship> expand(Path path, BranchState<Object> branchState) {
+        // If we get to an Node or Transit, stop traversing, we found a valid path.
+        if (path.endNode().hasLabel(Labels.Node)) {
             return Collections.emptyList();
         }
 
@@ -50,8 +48,8 @@ public class DecisionTreeExpander implements PathExpander {
     private boolean isTrue(Node rule) throws Exception {
             // Get the properties of the rule stored in the node
             Map<String, Object> ruleProperties = rule.getAllProperties();
-            String[] parameterNames = Magic.explode((String) ruleProperties.get("parameter_names"));
-            Class<?>[] parameterTypes = Magic.stringToTypes((String) ruleProperties.get("parameter_types"));
+            String[] parameterNames = Magic.explode((String) ruleProperties.get("parameters"));
+            Class<?>[] parameterTypes = Magic.stringToTypes((String) ruleProperties.get("types"));
 
             // Fill the arguments array with their corresponding values
             Object[] arguments = new Object[parameterNames.length];
@@ -69,7 +67,7 @@ public class DecisionTreeExpander implements PathExpander {
     }
 
     @Override
-    public PathExpander reverse() {
+    public PathExpander<Object> reverse() {
         return null;
     }
 }

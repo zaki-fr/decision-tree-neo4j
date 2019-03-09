@@ -1,4 +1,4 @@
-package com.maxdemarzi.results;
+package fr.zaki.results;
 
 public class StringResult {
     public final static StringResult EMPTY = new StringResult(null);

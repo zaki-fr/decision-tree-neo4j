@@ -1,31 +1,40 @@
-package com.maxdemarzi;
-
-import com.maxdemarzi.schema.Labels;
-import com.maxdemarzi.schema.RelationshipTypes;
-import org.codehaus.janino.ScriptEvaluator;
-import org.neo4j.graphdb.*;
-import org.neo4j.graphdb.traversal.BranchState;
-import org.neo4j.logging.Log;
+package fr.zaki;
 
 import java.util.Collections;
 import java.util.Map;
 
-public class DecisionTreeExpanderTwo implements PathExpander {
-    private Map<String, String> facts;
-    private Log log;
+import org.codehaus.janino.ScriptEvaluator;
+import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Path;
+import org.neo4j.graphdb.PathExpander;
+import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.RelationshipType;
+import org.neo4j.graphdb.traversal.BranchState;
+
+import fr.zaki.schema.Labels;
+import fr.zaki.schema.RelationshipTypes;
+
+public class DecisionTreeExpanderScript extends DecisionTreeBase implements PathExpander<Object> {
     ScriptEvaluator se = new ScriptEvaluator();
 
-    public DecisionTreeExpanderTwo(Map<String, String> facts, Log log) {
-        this.facts = facts;
-        this.log = log;
+    public DecisionTreeExpanderScript() {
         se.setReturnType(String.class);
     }
 
     @Override
-    public Iterable<Relationship> expand(Path path, BranchState branchState) {
-        // If we get to an Answer stop traversing, we found a valid path.
-        if (path.endNode().hasLabel(Labels.Answer)) {
-            return Collections.emptyList();
+    public Iterable<Relationship> expand(Path path, BranchState<Object> branchState) {
+        // If we get to an Node or Transit, stop traversing, we found a valid path.
+        if (path.endNode().hasLabel(Labels.Node)) {
+            try {
+                if (shouldEnd(path.endNode())) {
+                    return Collections.emptyList();
+                } 
+            } catch (Exception e) {
+                log.debug("Decision Tree Traversal failed", e);
+                // Could not continue this way!
+                return Collections.emptyList();
+            }
         }
 
         // If we have Rules to evaluate, go do that.
@@ -37,7 +46,6 @@ public class DecisionTreeExpanderTwo implements PathExpander {
             try {
                 return path.endNode().getRelationships(Direction.OUTGOING, choosePath(path.endNode()));
             } catch (Exception e) {
-
                 log.debug("Decision Tree Traversal failed", e);
                 // Could not continue this way!
                 return Collections.emptyList();
@@ -51,8 +59,8 @@ public class DecisionTreeExpanderTwo implements PathExpander {
     private RelationshipType choosePath(Node rule) throws Exception {
         // Get the properties of the rule stored in the node
         Map<String, Object> ruleProperties = rule.getAllProperties();
-        String[] parameterNames = Magic.explode((String) ruleProperties.get("parameter_names"));
-        Class<?>[] parameterTypes = Magic.stringToTypes((String) ruleProperties.get("parameter_types"));
+        String[] parameterNames = Magic.explode((String) ruleProperties.get("parameters"));
+        Class<?>[] parameterTypes = Magic.stringToTypes((String) ruleProperties.get("types"));
 
         // Fill the arguments array with their corresponding values
         Object[] arguments = new Object[parameterNames.length];
@@ -70,7 +78,7 @@ public class DecisionTreeExpanderTwo implements PathExpander {
     }
 
     @Override
-    public PathExpander reverse() {
+    public PathExpander<Object> reverse() {
         return null;
     }
 }

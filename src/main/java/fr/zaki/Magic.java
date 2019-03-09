@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.maxdemarzi;
+package fr.zaki;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -71,10 +71,13 @@ public class Magic {
      */
     public static String[]
     explode(String s) {
-        StringTokenizer st = new StringTokenizer(s, ",");
-        List<String>    l  = new ArrayList<String>();
-        while (st.hasMoreTokens()) l.add(st.nextToken());
-        return (String[]) l.toArray(new String[l.size()]);
+        if (s != null) {
+            StringTokenizer st = new StringTokenizer(s, ",");
+            List<String>    l  = new ArrayList<String>();
+            while (st.hasMoreTokens()) l.add(st.nextToken());
+            return (String[]) l.toArray(new String[l.size()]);
+        }
+        return new String[0];
     }
 
     /**
@@ -82,7 +85,6 @@ public class Magic {
      */
     public static Class<?>
     stringToType(String s) {
-
         int brackets = 0;
         while (s.endsWith("[]")) {
             ++brackets;
@@ -129,7 +131,9 @@ public class Magic {
      */
     public static Class<?>[]
     stringToTypes(String s) {
-
+        if (s == null) {
+            return (Class<?>[])new Class[0];
+        }
         StringTokenizer st = new StringTokenizer(s, ",");
         List<Class<?>> l  = new ArrayList<Class<?>>();
         while (st.hasMoreTokens()) l.add(Magic.stringToType(st.nextToken()));
