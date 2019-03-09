@@ -38,10 +38,12 @@ public class DecisionTreeTraverser {
     }
 
     private Stream<PathResult> decisionPath(Node tree, Map<String, String> facts) {
-        decisionTreeEvaluator.setParameters(facts);
+        DecisionTreeExpander decisionTreeExpander = new DecisionTreeExpander();
+        decisionTreeExpander.setParameters(facts, log);
+        decisionTreeEvaluator.setParameters(facts, log);
         TraversalDescription myTraversal = db.traversalDescription()
                 .depthFirst()
-                .expand(new DecisionTreeExpander(facts))
+                .expand(decisionTreeExpander)
                 .evaluator(decisionTreeEvaluator);
 
         return myTraversal.traverse(tree).stream().map(PathResult::new);
@@ -60,10 +62,12 @@ public class DecisionTreeTraverser {
     }
 
     private Stream<PathResult> decisionPathTwo(Node tree, Map<String, String> facts) {
-        decisionTreeEvaluator.setParameters(facts);
+        DecisionTreeExpanderScript decisionTreeExpanderScript = new DecisionTreeExpanderScript();
+        decisionTreeExpanderScript.setParameters(facts, log);
+        decisionTreeEvaluator.setParameters(facts, log);
         TraversalDescription myTraversal = db.traversalDescription()
                 .depthFirst()
-                .expand(new DecisionTreeExpanderScript(facts, log))
+                .expand(decisionTreeExpanderScript)
                 .evaluator(decisionTreeEvaluator);
 
         return myTraversal.traverse(tree).stream().map(PathResult::new);

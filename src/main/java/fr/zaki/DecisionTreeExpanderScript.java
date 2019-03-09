@@ -1,30 +1,31 @@
 package fr.zaki;
 
-import fr.zaki.schema.Labels;
-import fr.zaki.schema.RelationshipTypes;
-import org.codehaus.janino.ScriptEvaluator;
-import org.neo4j.graphdb.*;
-import org.neo4j.graphdb.traversal.BranchState;
-import org.neo4j.logging.Log;
-
 import java.util.Collections;
 import java.util.Map;
 
-public class DecisionTreeExpanderScript implements PathExpander {
-    private Map<String, String> facts;
-    private Log log;
+import org.codehaus.janino.ScriptEvaluator;
+import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Path;
+import org.neo4j.graphdb.PathExpander;
+import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.RelationshipType;
+import org.neo4j.graphdb.traversal.BranchState;
+
+import fr.zaki.schema.Labels;
+import fr.zaki.schema.RelationshipTypes;
+
+public class DecisionTreeExpanderScript extends DecisionTreeBase implements PathExpander<Object> {
     ScriptEvaluator se = new ScriptEvaluator();
 
-    public DecisionTreeExpanderScript(Map<String, String> facts, Log log) {
-        this.facts = facts;
-        this.log = log;
+    public DecisionTreeExpanderScript() {
         se.setReturnType(String.class);
     }
 
     @Override
-    public Iterable<Relationship> expand(Path path, BranchState branchState) {
+    public Iterable<Relationship> expand(Path path, BranchState<Object> branchState) {
         // If we get to an Answer or Transit, stop traversing, we found a valid path.
-        if (path.endNode().hasLabel(Labels.Answer) || path.endNode().hasLabel(Labels.Transit)) {
+        if (path.endNode().hasLabel(Labels.Answer)) {
             try {
                 if (shouldEnd(path.endNode())) {
                     return Collections.emptyList();
@@ -76,34 +77,8 @@ public class DecisionTreeExpanderScript implements PathExpander {
         return RelationshipType.withName((String) se.evaluate(arguments));
     }
 
-    private boolean shouldEnd(Node node) throws Exception {
-        int argumentCount = 0;
-        boolean hasNextParameter = true;
-        Map<String, Object> nodeProperties = node.getAllProperties();
-        String[] parameterNames = Magic.explode((String) nodeProperties.get("parameter_names"));
-        Class<?>[] parameterTypes = Magic.stringToTypes((String) nodeProperties.get("parameter_types"));
-
-        // Fill the arguments array with their corresponding values
-        Object[] arguments = new Object[parameterNames.length];
-        for (int j = 0; j < parameterNames.length; ++j) {
-            String value = facts.get(parameterNames[j]);
-            if (value != null) {
-                arguments[j] = Magic.createObject(parameterTypes[j], value);
-                argumentCount++;
-            }
-        }
-
-        if (node.hasRelationship(Direction.OUTGOING, RelationshipTypes.HAS)) {
-            if (argumentCount > 0) {
-                hasNextParameter = false;
-            }
-        }
-
-        return false;
-    }
-
     @Override
-    public PathExpander reverse() {
+    public PathExpander<Object> reverse() {
         return null;
     }
 }

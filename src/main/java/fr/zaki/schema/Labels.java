@@ -6,6 +6,5 @@ public enum Labels implements Label {
     Tree,
     Decision,
     Rule,
-    Answer,
-    Transit
+    Answer
 }

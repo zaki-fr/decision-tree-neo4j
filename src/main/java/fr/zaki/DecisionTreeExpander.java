@@ -9,19 +9,17 @@ import org.neo4j.graphdb.traversal.BranchState;
 import java.util.Collections;
 import java.util.Map;
 
-public class DecisionTreeExpander implements PathExpander {
-    private Map<String, String> facts;
+public class DecisionTreeExpander extends DecisionTreeBase implements PathExpander<Object> {
     private ExpressionEvaluator ee = new ExpressionEvaluator();
 
-    public DecisionTreeExpander(Map<String, String> facts) {
-        this.facts = facts;
+    public DecisionTreeExpander() {
         ee.setExpressionType(boolean.class);
     }
 
     @Override
-    public Iterable<Relationship> expand(Path path, BranchState branchState) {
+    public Iterable<Relationship> expand(Path path, BranchState<Object> branchState) {
         // If we get to an Answer or Transit, stop traversing, we found a valid path.
-        if (path.endNode().hasLabel(Labels.Answer) || path.endNode().hasLabel(Labels.Transit)) {
+        if (path.endNode().hasLabel(Labels.Answer)) {
             return Collections.emptyList();
         }
 
@@ -69,7 +67,7 @@ public class DecisionTreeExpander implements PathExpander {
     }
 
     @Override
-    public PathExpander reverse() {
+    public PathExpander<Object> reverse() {
         return null;
     }
 }
