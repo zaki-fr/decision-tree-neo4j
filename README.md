@@ -61,7 +61,7 @@ Create some test data with stopped condition node:
     CREATE (answer_correct:Node { id: 'correct', parameters: 'answer_2', types:'String'})
     CREATE (answer_incorrect:Node { id: 'incorrect' })
 
-A stopable Node is a Node with `parameters` field indicates to passthrough it if its `values` are presented
+A stoppable Node is a Node with `parameters` field indicates to passthrough it if its `values` are presented
 
     CREATE (answer_stop:Node { id: 'stop', parameters: 'answer_4', types:'String' })
 
