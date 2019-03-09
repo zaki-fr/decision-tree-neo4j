@@ -22,20 +22,20 @@ public class DecisionTreeTraverserScriptTest {
             .withProcedure(DecisionTreeTraverser.class);
 
     @Test
-    public void testTraversal() throws Exception {
+    public void testTraversalWithStopCondition() throws Exception {
         HTTP.Response response = HTTP.POST(neo4j.httpURI().resolve("/db/data/transaction/commit").toString(), QUERY1);
         int count = response.get("results").get(0).get("data").size();
         assertEquals(1, count);
         ArrayList<Map> path1 = mapper.convertValue(response.get("results").get(0).get("data").get(0).get("row").get(0), ArrayList.class);
-        assertEquals("incorrect", path1.get(path1.size() - 1).get("id"));
+        assertEquals("stop", path1.get(path1.size() - 1).get("id"));
     }
 
     private static final Map QUERY1 =
             singletonMap("statements", singletonList(singletonMap("statement",
-                    "CALL fr.zaki.traverse.decision_tree_script('funeral', {answer_1:'yeah', answer_2:'yeah', answer_3:'yeah'}) yield path return path")));
+                    "CALL fr.zaki.traverse.decision_tree_script('funeral', {answer_1:'yeah', answer_2:'yeah'}) yield path return path")));
 
     @Test
-    public void testTraversalTwo() throws Exception {
+    public void testTraversalWithWrongValue() throws Exception {
         HTTP.Response response = HTTP.POST(neo4j.httpURI().resolve("/db/data/transaction/commit").toString(), QUERY2);
         int count = response.get("results").get(0).get("data").size();
         assertEquals(1, count);
@@ -48,17 +48,17 @@ public class DecisionTreeTraverserScriptTest {
                     "CALL fr.zaki.traverse.decision_tree_script('funeral', {answer_1:'what', answer_2:'', answer_3:''}) yield path return path")));
 
     @Test
-    public void testTraversalThree() throws Exception {
+    public void testTraversalWithContinueRule() throws Exception {
         HTTP.Response response = HTTP.POST(neo4j.httpURI().resolve("/db/data/transaction/commit").toString(), QUERY3);
         int count = response.get("results").get(0).get("data").size();
         assertEquals(1, count);
         ArrayList<Map> path1 = mapper.convertValue(response.get("results").get(0).get("data").get(0).get("row").get(0), ArrayList.class);
-        assertEquals("incorrect", path1.get(path1.size() - 1).get("id"));
+        assertEquals("correct", path1.get(path1.size() - 1).get("id"));
     }
 
     private static final Map QUERY3 =
             singletonMap("statements", singletonList(singletonMap("statement",
-                    "CALL fr.zaki.traverse.decision_tree_script('funeral', {answer_1:'yeah', answer_2:'yeah', answer_3:'okay'}) yield path return path")));
+                    "CALL fr.zaki.traverse.decision_tree_script('funeral', {answer_1:'yeah', answer_2:'yeah', answer_3:'okay', answer_4:'okay'}) yield path return path")));
 
 
     private static final String MODEL_STATEMENT =
