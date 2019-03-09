@@ -63,12 +63,12 @@ public class DecisionTreeTraverserExpressionTest {
 
 
     private static final String MODEL_STATEMENT =
-            "CREATE (tree:Tree { id: 'bar entrance' })" +
-                    "CREATE (over21_rule:Rule { parameter_names: 'age', parameter_types:'int', expression:'age >= 21' })" +
-                    "CREATE (gender_rule:Rule { parameter_names: 'age,gender', parameter_types:'int,String', expression:'(age >= 18) && gender.equals(\"female\")' })" +
+            "CREATE (root:Tree { id: 'bar entrance' })" +
+                    "CREATE (over21_rule:Rule { parameters: 'age', types:'int', expression:'age >= 21' })" +
+                    "CREATE (gender_rule:Rule { parameters: 'age,gender', types:'int,String', expression:'(age >= 18) && gender.equals(\"female\")' })" +
                     "CREATE (answer_yes:Answer { id: 'yes' })" +
                     "CREATE (answer_no:Answer { id: 'no' })" +
-                    "CREATE (tree)-[:HAS]->(over21_rule)" +
+                    "CREATE (root)-[:HAS]->(over21_rule)" +
                     "CREATE (over21_rule)-[:IS_TRUE]->(answer_yes)" +
                     "CREATE (over21_rule)-[:IS_FALSE]->(gender_rule)" +
                     "CREATE (gender_rule)-[:IS_TRUE]->(answer_yes)" +

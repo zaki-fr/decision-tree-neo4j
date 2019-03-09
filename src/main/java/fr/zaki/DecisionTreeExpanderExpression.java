@@ -48,8 +48,8 @@ public class DecisionTreeExpanderExpression extends DecisionTreeBase implements 
     private boolean isTrue(Node rule) throws Exception {
             // Get the properties of the rule stored in the node
             Map<String, Object> ruleProperties = rule.getAllProperties();
-            String[] parameterNames = Magic.explode((String) ruleProperties.get("parameter_names"));
-            Class<?>[] parameterTypes = Magic.stringToTypes((String) ruleProperties.get("parameter_types"));
+            String[] parameterNames = Magic.explode((String) ruleProperties.get("parameters"));
+            Class<?>[] parameterTypes = Magic.stringToTypes((String) ruleProperties.get("types"));
 
             // Fill the arguments array with their corresponding values
             Object[] arguments = new Object[parameterNames.length];

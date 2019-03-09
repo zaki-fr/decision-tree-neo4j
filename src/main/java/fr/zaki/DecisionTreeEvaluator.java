@@ -17,7 +17,7 @@ public class DecisionTreeEvaluator extends DecisionTreeBase implements PathEvalu
 					return Evaluation.INCLUDE_AND_PRUNE;
 				}
 			} catch (Exception e) {
-				System.out.println("[DecisionTreeEvaluator] " + e.toString());
+				log.error("[DecisionTreeEvaluator] " + e.toString());
 			}
 			return Evaluation.EXCLUDE_AND_CONTINUE;
 		} else {

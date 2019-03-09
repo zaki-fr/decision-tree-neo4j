@@ -25,9 +25,8 @@ public class DecisionTreeBase {
 	    int argumentCount = 0;
 	    boolean shouldEndTraversing = true;
 	    Map<String, Object> nodeProperties = node.getAllProperties();
-	    System.out.println("shouldEnd::nodeProperties:" + nodeProperties + " facts:" + facts);
-	    String[] parameterNames = Magic.explode((String) nodeProperties.get("parameter_names"));
-	    Class<?>[] parameterTypes = Magic.stringToTypes((String) nodeProperties.get("parameter_types"));
+	    String[] parameterNames = Magic.explode((String) nodeProperties.get("parameters"));
+	    Class<?>[] parameterTypes = Magic.stringToTypes((String) nodeProperties.get("types"));
 	    // Fill the arguments array with their corresponding values
 	    Object[] arguments = new Object[parameterNames.length];
 	    for (int j = 0; j < parameterNames.length; ++j) {
@@ -41,7 +40,6 @@ public class DecisionTreeBase {
 	    if (node.hasRelationship(Direction.OUTGOING, RelationshipTypes.HAS)) {
 	        if (argumentCount > 0) {
 	            shouldEndTraversing = false;
-	            System.out.println("shouldEnd::shouldEndTraversing:" + argumentCount);
 	        }
 	    }
 	

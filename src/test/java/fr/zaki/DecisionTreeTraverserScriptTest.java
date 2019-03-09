@@ -56,21 +56,33 @@ public class DecisionTreeTraverserScriptTest {
         assertEquals("correct", path1.get(path1.size() - 1).get("id"));
     }
 
+    @Test
+    public void testTraversalWithContinueRuleIncorrect() throws Exception {
+        HTTP.Response response = HTTP.POST(neo4j.httpURI().resolve("/db/data/transaction/commit").toString(), QUERY4);
+        int count = response.get("results").get(0).get("data").size();
+        assertEquals(1, count);
+        ArrayList<Map> path1 = mapper.convertValue(response.get("results").get(0).get("data").get(0).get("row").get(0), ArrayList.class);
+        assertEquals("unknown", path1.get(path1.size() - 1).get("id"));
+    }
+
     private static final Map QUERY3 =
             singletonMap("statements", singletonList(singletonMap("statement",
                     "CALL fr.zaki.traverse.DecisionTreeScript('funeral', {answer_1:'yeah', answer_2:'yeah', answer_3:'okay', answer_4:'okay'}) yield path return path")));
 
+    private static final Map QUERY4 =
+            singletonMap("statements", singletonList(singletonMap("statement",
+                    "CALL fr.zaki.traverse.DecisionTreeScript('funeral', {answer_1:'yeah', answer_2:'yeah', answer_3:'okay', answer_4:'nok'}) yield path return path")));
 
     private static final String MODEL_STATEMENT =
             "CREATE (tree:Tree { id: 'funeral' })" +
-                    "CREATE (good_man_rule:Rule { name: 'Was Lil Jon a good man?', parameter_names: 'answer_1', parameter_types:'String', script:'switch (answer_1) { case \"yeah\": return \"OPTION_1\"; case \"what\": return \"OPTION_2\"; case \"okay\": return \"OPTION_3\"; default: return \"UNKNOWN\"; }' })" +
-                    "CREATE (good_man_two_rule:Rule { name: 'I said, was he a good man?', parameter_names: 'answer_2', parameter_types:'String', script:'switch (answer_2) { case \"yeah\": return \"OPTION_1\"; case \"what\": return \"OPTION_2\"; case \"okay\": return \"OPTION_3\"; default: return \"UNKNOWN\"; }' })" +
-                    "CREATE (rest_in_peace_rule:Rule { name: 'May he rest in peace', parameter_names: 'answer_3', parameter_types:'String', script:'switch (answer_3) { case \"yeah\": return \"OPTION_1\"; case \"what\": return \"OPTION_2\"; case \"okay\": return \"OPTION_3\"; default: return \"UNKNOWN\"; } ' })" +
-                    "CREATE (another_rule:Rule { name: 'Yet another rule', parameter_names: 'answer_4', parameter_types:'String', script:'switch (answer_4) { case \"yeah\": return \"OPTION_1\"; case \"what\": return \"OPTION_2\"; case \"okay\": return \"OPTION_3\"; default: return \"UNKNOWN\"; } ' })" +
+                    "CREATE (good_man_rule:Rule { name: 'Was Lil Jon a good man?', parameters: 'answer_1', types:'String', script:'switch (answer_1) { case \"yeah\": return \"OPTION_1\"; case \"what\": return \"OPTION_2\"; case \"okay\": return \"OPTION_3\"; default: return \"UNKNOWN\"; }' })" +
+                    "CREATE (good_man_two_rule:Rule { name: 'I said, was he a good man?', parameters: 'answer_2', types:'String', script:'switch (answer_2) { case \"yeah\": return \"OPTION_1\"; case \"what\": return \"OPTION_2\"; case \"okay\": return \"OPTION_3\"; default: return \"UNKNOWN\"; }' })" +
+                    "CREATE (rest_in_peace_rule:Rule { name: 'May he rest in peace', parameters: 'answer_3', types:'String', script:'switch (answer_3) { case \"yeah\": return \"OPTION_1\"; case \"what\": return \"OPTION_2\"; case \"okay\": return \"OPTION_3\"; default: return \"UNKNOWN\"; } ' })" +
+                    "CREATE (another_rule:Rule { name: 'Yet another rule', parameters: 'answer_4', types:'String', script:'switch (answer_4) { case \"yeah\": return \"OPTION_1\"; case \"what\": return \"OPTION_2\"; case \"okay\": return \"OPTION_3\"; default: return \"UNKNOWN\"; } ' })" +
                     
-                    "CREATE (answer_correct:Answer { id: 'correct', parameter_names: 'answer_2', parameter_types:'String'})" +
+                    "CREATE (answer_correct:Answer { id: 'correct', parameters: 'answer_2', types:'String'})" +
                     "CREATE (answer_incorrect:Answer { id: 'incorrect' })" +
-                    "CREATE (answer_stop:Answer { id: 'stop', parameter_names: 'answer_3', parameter_types:'String' })" +
+                    "CREATE (answer_stop:Answer { id: 'stop', parameters: 'answer_4', types:'String' })" +
                     "CREATE (answer_unknown:Answer { id: 'unknown'})" +
                     
                     "CREATE (tree)-[:HAS]->(good_man_rule)" +

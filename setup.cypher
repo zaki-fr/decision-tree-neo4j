@@ -4,10 +4,10 @@ CALL fr.zaki.schema.generate;
 # STEP2: put the dump data nodes
 
 CREATE (cmd08:Tree { id: 'CMD08' })
-CREATE (cmd08_rule:Rule { name: 'Acte op. de la CMD 08', parameter_names: 'answer_cm08', parameter_types:'String', script:'switch (answer_cm08) { case \"POSITIVE\": return \"PASSED\"; case \"NEGATIVE\": return \"FAILED\"; case \"PENDING\": return \"IN_WAIT\"; default: return \"UNKNOWN\"; }' })
-CREATE (dp007_rule:Rule { name: 'Infection ostéoarticulaire (D-077)', parameter_names: 'answer_dp007', parameter_types:'String', script:'switch (answer_dp007) { case \"POSITIVE\": return \"PASSED\"; case \"NEGATIVE\": return \"FAILED\"; case \"PENDING\": return \"IN_WAIT\"; default: return \"UNKNOWN\"; }' })
-CREATE (a368_rule:Rule { name: 'Itv. maj. pour infection ostéoarticulaire (A-368)', parameter_names: 'answer_a368', parameter_types:'String', script:'switch (answer_a368) { case \"POSITIVE\": return \"PASSED\"; case \"NEGATIVE\": return \"FAILED\"; case \"PENDING\": return \"IN_WAIT\"; default: return \"UNKNOWN\"; } ' })
-CREATE (a289_rule:Rule { name: 'Traction continue ou réduction progressive : hanche ou fémur (A-289)', parameter_names: 'answer_a289', parameter_types:'String', script:'switch (answer_a289) { case \"POSITIVE\": return \"PASSED\"; case \"NEGATIVE\": return \"FAILED\"; case \"PENDING\": return \"IN_WAIT\"; default: return \"UNKNOWN\"; } ' })
+CREATE (cmd08_rule:Rule { name: 'Acte op. de la CMD 08', parameters: 'answer_cm08', types:'String', script:'switch (answer_cm08) { case \"POSITIVE\": return \"PASSED\"; case \"NEGATIVE\": return \"FAILED\"; case \"PENDING\": return \"IN_WAIT\"; default: return \"UNKNOWN\"; }' })
+CREATE (dp007_rule:Rule { name: 'Infection ostéoarticulaire (D-077)', parameters: 'answer_dp007', types:'String', script:'switch (answer_dp007) { case \"POSITIVE\": return \"PASSED\"; case \"NEGATIVE\": return \"FAILED\"; case \"PENDING\": return \"IN_WAIT\"; default: return \"UNKNOWN\"; }' })
+CREATE (a368_rule:Rule { name: 'Itv. maj. pour infection ostéoarticulaire (A-368)', parameters: 'answer_a368', types:'String', script:'switch (answer_a368) { case \"POSITIVE\": return \"PASSED\"; case \"NEGATIVE\": return \"FAILED\"; case \"PENDING\": return \"IN_WAIT\"; default: return \"UNKNOWN\"; } ' })
+CREATE (a289_rule:Rule { name: 'Traction continue ou réduction progressive : hanche ou fémur (A-289)', parameters: 'answer_a289', types:'String', script:'switch (answer_a289) { case \"POSITIVE\": return \"PASSED\"; case \"NEGATIVE\": return \"FAILED\"; case \"PENDING\": return \"IN_WAIT\"; default: return \"UNKNOWN\"; } ' })
 CREATE (ghm_08C61:Answer { id: 'GHM 08C61'})
 CREATE (ghm_08C62:Answer { id: 'GHM 08C62'})
 CREATE (ghm_08K04:Answer { id: 'GHM 08K04'})
