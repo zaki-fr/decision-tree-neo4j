@@ -66,12 +66,12 @@ public class DecisionTreeTraverserScriptTest {
         int count = response.get("results").get(0).get("data").size();
         assertEquals(1, count);
         ArrayList<Map> path1 = mapper.convertValue(response.get("results").get(0).get("data").get(0).get("row").get(0), ArrayList.class);
-        assertEquals("unknown", path1.get(path1.size() - 1).get("id"));
+        assertEquals("incorrect", path1.get(path1.size() - 1).get("id"));
     }
 
     private static final Map QUERY4 =
             singletonMap("statements", singletonList(singletonMap("statement",
-                    "CALL fr.zaki.traverse.DecisionTreeScript('funeral', {answer_1:'yeah', answer_2:'yeah', answer_3:'okay', answer_4:'nok'}) yield path return path")));
+                    "CALL fr.zaki.traverse.DecisionTreeScript('funeral', {answer_1:'yeah', answer_2:'yeah', answer_3:'okay', answer_4:'yeah'}) yield path return path")));
 
     private static final String MODEL_STATEMENT =
             "CREATE (tree:Tree { id: 'funeral' })" +

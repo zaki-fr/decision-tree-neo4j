@@ -48,27 +48,21 @@ Try it:
     CALL fr.zaki.traverse.DecisionTreeExpression('bar entrance', {gender:'male', age:'23'}) yield path return path;     
     
     
-Evaluating Scripts instead of expressions.
+***Evaluating Scripts instead of expressions.***
 
-Create some test data with stopped condition node:
+Create some test data with stopped condition node: A stoppable Node is a Node with `parameters` field indicates to passthrough it if its `values` are presented.
+
+If the `answer_4` is not set, the path will be stopped at the `answer_stop:Node`, if set, the next `another_rule` rule will be executed. It's necessary to declare `answer_stop:Node`-[:HAS]-`another_rule`.
 
     CREATE (tree:Tree { id: 'funeral' })
     CREATE (good_man_rule:Rule { name: 'Was Lil Jon a good man?', parameters: 'answer_1', types:'String', script:'switch (answer_1) { case \"yeah\": return \"OPTION_1\"; case \"what\": return \"OPTION_2\"; case \"okay\": return \"OPTION_3\"; default: return \"UNKNOWN\"; }' })
     CREATE (good_man_two_rule:Rule { name: 'I said, was he a good man?', parameters: 'answer_2', types:'String', script:'switch (answer_2) { case \"yeah\": return \"OPTION_1\"; case \"what\": return \"OPTION_2\"; case \"okay\": return \"OPTION_3\"; default: return \"UNKNOWN\"; }' })
     CREATE (rest_in_peace_rule:Rule { name: 'May he rest in peace', parameters: 'answer_3', types:'String', script:'switch (answer_3) { case \"yeah\": return \"OPTION_1\"; case \"what\": return \"OPTION_2\"; case \"okay\": return \"OPTION_3\"; default: return \"UNKNOWN\"; } ' })
-
+    CREATE (another_rule:Rule { name: 'Yet another rule', parameters: 'answer_4', types:'String', script:'switch (answer_4) { case \"yeah\": return \"OPTION_1\"; case \"what\": return \"OPTION_2\"; case \"okay\": return \"OPTION_3\"; default: return \"UNKNOWN\"; } ' })
     
     CREATE (answer_correct:Node { id: 'correct', parameters: 'answer_2', types:'String'})
     CREATE (answer_incorrect:Node { id: 'incorrect' })
-
-A stoppable Node is a Node with `parameters` field indicates to passthrough it if its `values` are presented
-
     CREATE (answer_stop:Node { id: 'stop', parameters: 'answer_4', types:'String' })
-
-If the `answer_4` is not set, the path will be stopped at the `answer_stop:Node`, if set, the next `another_rule` rule will be executed. It's necessary to declare `answer_stop:Node`-[:HAS]-`another_rule`.
-
-    CREATE (another_rule:Rule { name: 'Yet another rule', parameters: 'answer_4', types:'String', script:'switch (answer_4) { case \"yeah\": return \"OPTION_1\"; case \"what\": return \"OPTION_2\"; case \"okay\": return \"OPTION_3\"; default: return \"UNKNOWN\"; } ' })
-
     CREATE (answer_unknown:Node { id: 'unknown'})
     
     CREATE (tree)-[:HAS]->(good_man_rule)
@@ -108,4 +102,4 @@ Test Traversal With Continue Rule After Stopped with a `correct` node:
 
 Test Traversal With Continue Rule After Stopped resulting an `incorrect` node:
 
-    CALL fr.zaki.traverse.DecisionTreeScript('funeral', {answer_1:'yeah', answer_2:'yeah', answer_3:'okay', answer_4:'nok'}) yield path return path;
+    CALL fr.zaki.traverse.DecisionTreeScript('funeral', {answer_1:'yeah', answer_2:'yeah', answer_3:'okay', answer_4:'yeah'}) yield path return path;
