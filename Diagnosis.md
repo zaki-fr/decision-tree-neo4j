@@ -1,8 +1,12 @@
-# STEP1: initialize the decision tree schema
+# STEP1: 
+
+Initialize the decision tree schema
   
     CALL fr.zaki.schema.generate;
 
-# STEP2: put the dump data nodes
+# STEP2: 
+
+Put the dummy GHM data nodes into neo4j database
 
     CREATE (cmd08:Tree { id: 'CMD08', parameters: 'answer_cm08', types:'String' })
     CREATE (cmd08_rule:Rule { name: 'Acte op. de la CMD 08', parameters: 'answer_cm08', types:'String', script:'switch (answer_cm08) { case \"POSITIVE\": return \"PASSED\"; case \"NEGATIVE\": return \"FAILED\"; default: return \"UNKNOWN\"; }' })
@@ -40,7 +44,9 @@
     CREATE (a289_rule)-[:FAILED]->(answer_continue)
     CREATE (a289_rule)-[:UNKNOWN]->(answer_unknown);
 
-# STEP3: docter: make a decision test procedure CMD08 for a patient
+# STEP3: 
+
+Doctor: make a decision test procedure CMD08 for a patient
 
     MATCH (cmd08:Tree { id: 'CMD08' })-[rels]-(nodes) return rels, cmd08, nodes
 
@@ -62,21 +68,21 @@ Return with the required parameters `answer_cm08` for the next applied rule:
     }
 
 
-# STEP4: after patient inspected all the test procedure, doctor get the result as POSITIVE,
+# STEP4: 
 
-He put the result of CMD08=POSTIVE in `answer_cm08` and get a suggession of the next procedure as `DP007` node.
+After patient inspected all the test procedure, doctor get the result as POSITIVE. He put the result of CMD08=POSTIVE in `answer_cm08` and get a suggession of the next procedure as `DP007` node.
 
     CALL fr.zaki.traverse.DecisionTreeScript('CMD08', {answer_cm08:'POSITIVE'}) yield path return path
 
-# STEP5: doctor get a DP007 code to examine the next procedure, after patient inspected all the test procedure of DP007, doctor get the result as POSITIVE,
+# STEP5: 
 
-He put the result of DP007=POSTIVE in `answer_dp007` and get a suggession of the next procedure as `A368` node.
+Doctor get a DP007 code to examine the next procedure, after patient inspected all the test procedure of DP007, doctor get the result as POSITIVE. He put the result of DP007=POSTIVE in `answer_dp007` and get a suggession of the next procedure as `A368` node.
 
     CALL fr.zaki.traverse.DecisionTreeScript('CMD08', {answer_cm08:'POSITIVE', answer_dp007:'POSITIVE'}) yield path return path
 
-# STEP5: continue with A368, the doctor will reach the final diagnostic with the GHM08C61 code,
+# STEP5: 
 
-He put the result of A368=POSTIVE in `answer_a368` and get a suggession of the final procedure as `GHM08C61` code.
+Continue with A368, the doctor will reach the final diagnostic with the GHM08C61 code. He put the result of A368=POSTIVE in `answer_a368` and get a suggession of the final procedure as `GHM08C61` code.
 
     CALL fr.zaki.traverse.DecisionTreeScript('CMD08', {answer_cm08:'POSITIVE', answer_dp007:'POSITIVE', answer_a368:'POSITIVE'}) yield path return path
 
