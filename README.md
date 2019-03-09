@@ -50,9 +50,9 @@ Create some test data:
     
 Try it:
 
-    CALL fr.zaki.traverse.decision_tree('bar entrance', {gender:'male', age:'20'}) yield path return path;
-    CALL fr.zaki.traverse.decision_tree('bar entrance', {gender:'female', age:'19'}) yield path return path;
-    CALL fr.zaki.traverse.decision_tree('bar entrance', {gender:'male', age:'23'}) yield path return path;     
+    CALL fr.zaki.traverse.DecisionTreeExpression('bar entrance', {gender:'male', age:'20'}) yield path return path;
+    CALL fr.zaki.traverse.DecisionTreeExpression('bar entrance', {gender:'female', age:'19'}) yield path return path;
+    CALL fr.zaki.traverse.DecisionTreeExpression('bar entrance', {gender:'male', age:'23'}) yield path return path;     
     
     
 Evaluating Scripts instead of expressions.
@@ -86,6 +86,6 @@ Create some test data:
 Try it:
 
 
-    CALL fr.zaki.traverse.decision_tree_script('funeral', {answer_1:'yeah', answer_2:'yeah', answer_3:'yeah'}) yield path return path    
-    CALL fr.zaki.traverse.decision_tree_script('funeral', {answer_1:'what', answer_2:'', answer_3:''}) yield path return path    
-    CALL fr.zaki.traverse.decision_tree_script('funeral', {answer_1:'what', answer_2:'yeah', answer_3:'okay'}) yield path return path
+    CALL fr.zaki.traverse.DecisionTreeScript('funeral', {answer_1:'yeah', answer_2:'yeah', answer_3:'yeah'}) yield path return path    
+    CALL fr.zaki.traverse.DecisionTreeScript('funeral', {answer_1:'what', answer_2:'', answer_3:''}) yield path return path    
+    CALL fr.zaki.traverse.DecisionTreeScript('funeral', {answer_1:'what', answer_2:'yeah', answer_3:'okay'}) yield path return path

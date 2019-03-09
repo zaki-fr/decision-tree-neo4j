@@ -13,7 +13,7 @@ import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static junit.framework.TestCase.assertEquals;
 
-public class DecisionTreeTraverserTest {
+public class DecisionTreeTraverserExpressionTest {
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -33,7 +33,7 @@ public class DecisionTreeTraverserTest {
 
     private static final Map QUERY1 =
             singletonMap("statements", singletonList(singletonMap("statement",
-                    "CALL fr.zaki.traverse.decision_tree('bar entrance', {gender:'male', age:'20'}) yield path return path")));
+                    "CALL fr.zaki.traverse.DecisionTreeExpression('bar entrance', {gender:'male', age:'20'}) yield path return path")));
 
     @Test
     public void testTraversalTwo() throws Exception {
@@ -46,7 +46,7 @@ public class DecisionTreeTraverserTest {
 
     private static final Map QUERY2 =
             singletonMap("statements", singletonList(singletonMap("statement",
-                    "CALL fr.zaki.traverse.decision_tree('bar entrance', {gender:'female', age:'19'}) yield path return path")));
+                    "CALL fr.zaki.traverse.DecisionTreeExpression('bar entrance', {gender:'female', age:'19'}) yield path return path")));
 
     @Test
     public void testTraversalThree() throws Exception {
@@ -59,7 +59,7 @@ public class DecisionTreeTraverserTest {
 
     private static final Map QUERY3 =
             singletonMap("statements", singletonList(singletonMap("statement",
-                    "CALL fr.zaki.traverse.decision_tree('bar entrance', {gender:'male', age:'23'}) yield path return path")));
+                    "CALL fr.zaki.traverse.DecisionTreeExpression('bar entrance', {gender:'male', age:'23'}) yield path return path")));
 
 
     private static final String MODEL_STATEMENT =

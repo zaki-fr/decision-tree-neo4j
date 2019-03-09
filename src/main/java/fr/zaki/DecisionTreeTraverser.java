@@ -25,8 +25,8 @@ public class DecisionTreeTraverser {
 
     private static final DecisionTreeEvaluator decisionTreeEvaluator = new DecisionTreeEvaluator();
 
-    @Procedure(name = "fr.zaki.traverse.decision_tree", mode = Mode.READ)
-    @Description("CALL fr.zaki.traverse.decision_tree(tree, facts) - traverse decision tree")
+    @Procedure(name = "fr.zaki.traverse.DecisionTreeExpression", mode = Mode.READ)
+    @Description("CALL fr.zaki.traverse.DecisionTreeExpression(tree, facts) - traverse decision tree")
     public Stream<PathResult> traverseDecisionTree(@Name("tree") String id, @Name("facts") Map<String, String> facts) throws IOException {
         // Which Decision Tree are we interested in?
         Node tree = db.findNode(Labels.Tree, "id", id);
@@ -38,7 +38,7 @@ public class DecisionTreeTraverser {
     }
 
     private Stream<PathResult> decisionPath(Node tree, Map<String, String> facts) {
-        DecisionTreeExpander decisionTreeExpander = new DecisionTreeExpander();
+        DecisionTreeExpanderExpression decisionTreeExpander = new DecisionTreeExpanderExpression();
         decisionTreeExpander.setParameters(facts, log);
         decisionTreeEvaluator.setParameters(facts, log);
         TraversalDescription myTraversal = db.traversalDescription()
@@ -49,8 +49,8 @@ public class DecisionTreeTraverser {
         return myTraversal.traverse(tree).stream().map(PathResult::new);
     }
 
-    @Procedure(name = "fr.zaki.traverse.decision_tree_script", mode = Mode.READ)
-    @Description("CALL fr.zaki.traverse.decision_tree_script(tree, facts) - traverse decision tree")
+    @Procedure(name = "fr.zaki.traverse.DecisionTreeScript", mode = Mode.READ)
+    @Description("CALL fr.zaki.traverse.DecisionTreeScript(tree, facts) - traverse decision tree")
     public Stream<PathResult> traverseDecisionTreeTwo(@Name("tree") String id, @Name("facts") Map<String, String> facts) throws IOException {
         // Which Decision Tree are we interested in?
         Node tree = db.findNode(Labels.Tree, "id", id);

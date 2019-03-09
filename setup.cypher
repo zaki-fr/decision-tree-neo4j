@@ -47,12 +47,12 @@ MATCH (cmd08:Tree { id: 'CMD08' })-[rels]-(nodes) return rels, cmd08, nodes
 
 # STEP4: after patient inspected all the test procedure, doctor get the result as POSITIVE,
 # He put the result of CMD08=POSTIVE and get a suggession of the next procedure as DP007.
-CALL fr.zaki.traverse.decision_tree_script('CMD08', {answer_cm08:'POSITIVE'}) yield path return path
+CALL fr.zaki.traverse.DecisionTreeScript('CMD08', {answer_cm08:'POSITIVE'}) yield path return path
 
 # OTHERS: under test,...
 MATCH (a:Answer { id: 'DP007' })-[rels]-(nodes) return rels, a, nodes
-CALL fr.zaki.traverse.decision_tree_script('CMD08', {answer_cm08:'POSITIVE', answer_dp007:'NEGATIVE'}) yield path return path
-CALL fr.zaki.traverse.decision_tree_script('CMD08', {answer_cm08:'POSITIVE', answer_dp007:'POSITIVE', answer_a368:'POSITIVE'}) yield path return path
-CALL fr.zaki.traverse.decision_tree_script('CMD08', {answer_cm08:'NEGATIVE', answer_a289:'POSITIVE'}) yield path return path
-CALL fr.zaki.traverse.decision_tree_script('CMD08', {answer_cm08:'NEGATIVE', answer_a289:'NEGATIVE'}) yield path return path
-CALL fr.zaki.traverse.decision_tree_script('CMD08', {answer_cm08:'NEGATIVE', answer_a289:'PENDING'}) yield path return path
+CALL fr.zaki.traverse.DecisionTreeScript('CMD08', {answer_cm08:'POSITIVE', answer_dp007:'NEGATIVE'}) yield path return path
+CALL fr.zaki.traverse.DecisionTreeScript('CMD08', {answer_cm08:'POSITIVE', answer_dp007:'POSITIVE', answer_a368:'POSITIVE'}) yield path return path
+CALL fr.zaki.traverse.DecisionTreeScript('CMD08', {answer_cm08:'NEGATIVE', answer_a289:'POSITIVE'}) yield path return path
+CALL fr.zaki.traverse.DecisionTreeScript('CMD08', {answer_cm08:'NEGATIVE', answer_a289:'NEGATIVE'}) yield path return path
+CALL fr.zaki.traverse.DecisionTreeScript('CMD08', {answer_cm08:'NEGATIVE', answer_a289:'PENDING'}) yield path return path

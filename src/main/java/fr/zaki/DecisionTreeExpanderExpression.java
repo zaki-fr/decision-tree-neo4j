@@ -9,10 +9,10 @@ import org.neo4j.graphdb.traversal.BranchState;
 import java.util.Collections;
 import java.util.Map;
 
-public class DecisionTreeExpander extends DecisionTreeBase implements PathExpander<Object> {
+public class DecisionTreeExpanderExpression extends DecisionTreeBase implements PathExpander<Object> {
     private ExpressionEvaluator ee = new ExpressionEvaluator();
 
-    public DecisionTreeExpander() {
+    public DecisionTreeExpanderExpression() {
         ee.setExpressionType(boolean.class);
     }
 

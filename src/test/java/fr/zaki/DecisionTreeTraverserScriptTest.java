@@ -32,7 +32,7 @@ public class DecisionTreeTraverserScriptTest {
 
     private static final Map QUERY1 =
             singletonMap("statements", singletonList(singletonMap("statement",
-                    "CALL fr.zaki.traverse.decision_tree_script('funeral', {answer_1:'yeah', answer_2:'yeah'}) yield path return path")));
+                    "CALL fr.zaki.traverse.DecisionTreeScript('funeral', {answer_1:'yeah', answer_2:'yeah'}) yield path return path")));
 
     @Test
     public void testTraversalWithWrongValue() throws Exception {
@@ -45,7 +45,7 @@ public class DecisionTreeTraverserScriptTest {
 
     private static final Map QUERY2 =
             singletonMap("statements", singletonList(singletonMap("statement",
-                    "CALL fr.zaki.traverse.decision_tree_script('funeral', {answer_1:'what', answer_2:'', answer_3:''}) yield path return path")));
+                    "CALL fr.zaki.traverse.DecisionTreeScript('funeral', {answer_1:'what', answer_2:'', answer_3:''}) yield path return path")));
 
     @Test
     public void testTraversalWithContinueRule() throws Exception {
@@ -58,7 +58,7 @@ public class DecisionTreeTraverserScriptTest {
 
     private static final Map QUERY3 =
             singletonMap("statements", singletonList(singletonMap("statement",
-                    "CALL fr.zaki.traverse.decision_tree_script('funeral', {answer_1:'yeah', answer_2:'yeah', answer_3:'okay', answer_4:'okay'}) yield path return path")));
+                    "CALL fr.zaki.traverse.DecisionTreeScript('funeral', {answer_1:'yeah', answer_2:'yeah', answer_3:'okay', answer_4:'okay'}) yield path return path")));
 
 
     private static final String MODEL_STATEMENT =
