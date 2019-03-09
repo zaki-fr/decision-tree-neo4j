@@ -1,35 +1,26 @@
-*** This project is branched from https://github.com/maxdemarzi/decision_trees_with_rules ***
-
 # Decision Trees With Rules
-POC Decision Tree traverser with rules
 
-This project requires Neo4j 3.3.x or higher
+***This project is branched from https://github.com/maxdemarzi/decision_trees_with_rules***
+
+Decision Tree traverser with rules by expression and script
 
 Instructions
 ------------ 
 
-This project uses maven, to build a jar-file with the procedure in this
-project, simply package the project with maven:
+This project uses maven, to build a jar-file with the procedure in this project, simply package the project with maven:
 
-    mvn clean package
+    mvn clean install
 
-This will produce a jar-file, `target/decision_trees_with_rules-1.0-SNAPSHOT.jar`,
-that can be copied to the `plugin` directory of your Neo4j instance.
+This will produce a jar-file, `target/decision-tree-core-1.0.1-SNAPSHOT.jar`,
 
-    cp target/decision_trees_with_rules-1.0-SNAPSHOT.jar neo4j-enterprise-3.3.1/plugins/.
-    
+Start neo4j server and its plugins using docker
 
-Download and Copy two additional files to your Neo4j plugins directory:
+```shellscript
+$ docker ps
+$ bash run-neo4j-with-plugin.sh
+```
 
-    http://central.maven.org/maven2/org/codehaus/janino/commons-compiler/3.0.8/commons-compiler-3.0.8.jar
-    http://central.maven.org/maven2/org/codehaus/janino/janino/3.0.8/janino-3.0.8.jar
-
-
-Edit your Neo4j/conf/neo4j.conf file by adding this line:
-
-    dbms.security.procedures.unrestricted=fr.zaki.*    
-
-Restart your Neo4j Server.
+Open the neo4j web admin `http://localhost:7474`
 
 Create the Schema by running this stored procedure:
 
@@ -40,8 +31,8 @@ Create some test data:
     CREATE (tree:Tree { id: 'bar entrance' })
     CREATE (over21_rule:Rule { name: 'Over 21?', parameters: 'age', types:'int', expression:'age >= 21' })
     CREATE (gender_rule:Rule { name: 'Over 18 and female', parameters: 'age,gender', types:'int,String', expression:'(age >= 18) && gender.equals(\"female\")' })
-    CREATE (answer_yes:Answer { id: 'yes'})
-    CREATE (answer_no:Answer { id: 'no'})
+    CREATE (answer_yes:Node { id: 'yes'})
+    CREATE (answer_no:Node { id: 'no'})
     CREATE (tree)-[:HAS]->(over21_rule)
     CREATE (over21_rule)-[:IS_TRUE]->(answer_yes)
     CREATE (over21_rule)-[:IS_FALSE]->(gender_rule)
@@ -63,9 +54,9 @@ Create some test data:
     CREATE (good_man_rule:Rule { name: 'Was Lil Jon a good man?', parameters: 'answer_1', types:'String', script:'switch (answer_1) { case \"yeah\": return \"OPTION_1\"; case \"what\": return \"OPTION_2\"; case \"okay\": return \"OPTION_3\"; default: return \"UNKNOWN\"; }' })
     CREATE (good_man_two_rule:Rule { name: 'I said, was he a good man?', parameters: 'answer_2', types:'String', script:'switch (answer_2) { case \"yeah\": return \"OPTION_1\"; case \"what\": return \"OPTION_2\"; case \"okay\": return \"OPTION_3\"; default: return \"UNKNOWN\"; }' })
     CREATE (rest_in_peace_rule:Rule { name: 'May he rest in peace', parameters: 'answer_3', types:'String', script:'switch (answer_3) { case \"yeah\": return \"OPTION_1\"; case \"what\": return \"OPTION_2\"; case \"okay\": return \"OPTION_3\"; default: return \"UNKNOWN\"; } ' })
-    CREATE (answer_correct:Answer { id: 'correct'})
-    CREATE (answer_incorrect:Answer { id: 'incorrect'})
-    CREATE (answer_unknown:Answer { id: 'unknown'})
+    CREATE (answer_correct:Node { id: 'correct'})
+    CREATE (answer_incorrect:Node { id: 'incorrect'})
+    CREATE (answer_unknown:Node { id: 'unknown'})
     CREATE (tree)-[:HAS]->(good_man_rule)
     CREATE (good_man_rule)-[:OPTION_1]->(answer_incorrect)
     CREATE (good_man_rule)-[:OPTION_2]->(good_man_two_rule)

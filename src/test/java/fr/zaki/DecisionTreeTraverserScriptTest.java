@@ -22,7 +22,7 @@ public class DecisionTreeTraverserScriptTest {
             .withProcedure(DecisionTreeTraverser.class);
 
     @Test
-    public void testTraversalWithStopCondition() throws Exception {
+    public void testTraversalWithStoppedCondition() throws Exception {
         HTTP.Response response = HTTP.POST(neo4j.httpURI().resolve("/db/data/transaction/commit").toString(), QUERY1);
         int count = response.get("results").get(0).get("data").size();
         assertEquals(1, count);
@@ -35,7 +35,7 @@ public class DecisionTreeTraverserScriptTest {
                     "CALL fr.zaki.traverse.DecisionTreeScript('funeral', {answer_1:'yeah', answer_2:'yeah'}) yield path return path")));
 
     @Test
-    public void testTraversalWithWrongValue() throws Exception {
+    public void testTraversalWithContinueRuleAfterStoppedUnknown() throws Exception {
         HTTP.Response response = HTTP.POST(neo4j.httpURI().resolve("/db/data/transaction/commit").toString(), QUERY2);
         int count = response.get("results").get(0).get("data").size();
         assertEquals(1, count);
@@ -48,7 +48,7 @@ public class DecisionTreeTraverserScriptTest {
                     "CALL fr.zaki.traverse.DecisionTreeScript('funeral', {answer_1:'what', answer_2:'', answer_3:''}) yield path return path")));
 
     @Test
-    public void testTraversalWithContinueRule() throws Exception {
+    public void testTraversalWithContinueRuleAfterStoppedCorrect() throws Exception {
         HTTP.Response response = HTTP.POST(neo4j.httpURI().resolve("/db/data/transaction/commit").toString(), QUERY3);
         int count = response.get("results").get(0).get("data").size();
         assertEquals(1, count);
@@ -56,18 +56,18 @@ public class DecisionTreeTraverserScriptTest {
         assertEquals("correct", path1.get(path1.size() - 1).get("id"));
     }
 
+    private static final Map QUERY3 =
+            singletonMap("statements", singletonList(singletonMap("statement",
+                    "CALL fr.zaki.traverse.DecisionTreeScript('funeral', {answer_1:'yeah', answer_2:'yeah', answer_3:'okay', answer_4:'okay'}) yield path return path")));
+
     @Test
-    public void testTraversalWithContinueRuleIncorrect() throws Exception {
+    public void testTraversalWithContinueRuleAfterStoppedIncorrect() throws Exception {
         HTTP.Response response = HTTP.POST(neo4j.httpURI().resolve("/db/data/transaction/commit").toString(), QUERY4);
         int count = response.get("results").get(0).get("data").size();
         assertEquals(1, count);
         ArrayList<Map> path1 = mapper.convertValue(response.get("results").get(0).get("data").get(0).get("row").get(0), ArrayList.class);
         assertEquals("unknown", path1.get(path1.size() - 1).get("id"));
     }
-
-    private static final Map QUERY3 =
-            singletonMap("statements", singletonList(singletonMap("statement",
-                    "CALL fr.zaki.traverse.DecisionTreeScript('funeral', {answer_1:'yeah', answer_2:'yeah', answer_3:'okay', answer_4:'okay'}) yield path return path")));
 
     private static final Map QUERY4 =
             singletonMap("statements", singletonList(singletonMap("statement",
@@ -80,10 +80,10 @@ public class DecisionTreeTraverserScriptTest {
                     "CREATE (rest_in_peace_rule:Rule { name: 'May he rest in peace', parameters: 'answer_3', types:'String', script:'switch (answer_3) { case \"yeah\": return \"OPTION_1\"; case \"what\": return \"OPTION_2\"; case \"okay\": return \"OPTION_3\"; default: return \"UNKNOWN\"; } ' })" +
                     "CREATE (another_rule:Rule { name: 'Yet another rule', parameters: 'answer_4', types:'String', script:'switch (answer_4) { case \"yeah\": return \"OPTION_1\"; case \"what\": return \"OPTION_2\"; case \"okay\": return \"OPTION_3\"; default: return \"UNKNOWN\"; } ' })" +
                     
-                    "CREATE (answer_correct:Answer { id: 'correct', parameters: 'answer_2', types:'String'})" +
-                    "CREATE (answer_incorrect:Answer { id: 'incorrect' })" +
-                    "CREATE (answer_stop:Answer { id: 'stop', parameters: 'answer_4', types:'String' })" +
-                    "CREATE (answer_unknown:Answer { id: 'unknown'})" +
+                    "CREATE (answer_correct:Node { id: 'correct', parameters: 'answer_2', types:'String'})" +
+                    "CREATE (answer_incorrect:Node { id: 'incorrect' })" +
+                    "CREATE (answer_stop:Node { id: 'stop', parameters: 'answer_4', types:'String' })" +
+                    "CREATE (answer_unknown:Node { id: 'unknown'})" +
                     
                     "CREATE (tree)-[:HAS]->(good_man_rule)" +
                     "CREATE (answer_stop)-[:HAS]->(another_rule)" +
