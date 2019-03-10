@@ -18,9 +18,17 @@ public class DecisionTreeExpanderExpression extends DecisionTreeBase implements 
 
     @Override
     public Iterable<Relationship> expand(Path path, BranchState<Object> branchState) {
-        // If we get to an Node or Transit, stop traversing, we found a valid path.
+        // If we get to a Node without required parameters, stop traversing, we found a valid path.
         if (path.endNode().hasLabel(Labels.Node)) {
-            return Collections.emptyList();
+            try {
+                if (shouldEnd(path.endNode())) {
+                    return Collections.emptyList();
+                } 
+            } catch (Exception e) {
+                log.debug("Decision Tree Traversal failed", e);
+                // Could not continue this way!
+                return Collections.emptyList();
+            }
         }
 
         // If we have Rules to evaluate, go do that.

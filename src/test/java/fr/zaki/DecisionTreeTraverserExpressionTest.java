@@ -23,7 +23,7 @@ public class DecisionTreeTraverserExpressionTest {
             .withProcedure(DecisionTreeTraverser.class);
 
     @Test
-    public void testTraversal() throws Exception {
+    public void testTraversalNoUnder21() throws Exception {
         HTTP.Response response = HTTP.POST(neo4j.httpURI().resolve("/db/data/transaction/commit").toString(), QUERY1);
         int count = response.get("results").get(0).get("data").size();
         assertEquals(1, count);
@@ -36,7 +36,7 @@ public class DecisionTreeTraverserExpressionTest {
                     "CALL fr.zaki.traverse.DecisionTreeExpression('bar entrance', {gender:'male', age:'20'}) yield path return path")));
 
     @Test
-    public void testTraversalTwo() throws Exception {
+    public void testTraversalGirlOver18() throws Exception {
         HTTP.Response response = HTTP.POST(neo4j.httpURI().resolve("/db/data/transaction/commit").toString(), QUERY2);
         int count = response.get("results").get(0).get("data").size();
         assertEquals(1, count);
@@ -49,28 +49,67 @@ public class DecisionTreeTraverserExpressionTest {
                     "CALL fr.zaki.traverse.DecisionTreeExpression('bar entrance', {gender:'female', age:'19'}) yield path return path")));
 
     @Test
-    public void testTraversalThree() throws Exception {
+    public void testTraversalCheckOver40() throws Exception {
         HTTP.Response response = HTTP.POST(neo4j.httpURI().resolve("/db/data/transaction/commit").toString(), QUERY3);
         int count = response.get("results").get(0).get("data").size();
         assertEquals(1, count);
         ArrayList<Map> path1 = mapper.convertValue(response.get("results").get(0).get("data").get(0).get("row").get(0), ArrayList.class);
-        assertEquals("yes", path1.get(path1.size() - 1).get("id"));
+        assertEquals("stop0", path1.get(path1.size() - 1).get("id"));
     }
 
     private static final Map QUERY3 =
             singletonMap("statements", singletonList(singletonMap("statement",
                     "CALL fr.zaki.traverse.DecisionTreeExpression('bar entrance', {gender:'male', age:'23'}) yield path return path")));
 
+    @Test
+    public void testTraversalPassOver40() throws Exception {
+        HTTP.Response response = HTTP.POST(neo4j.httpURI().resolve("/db/data/transaction/commit").toString(), QUERY4);
+        int count = response.get("results").get(0).get("data").size();
+        assertEquals(1, count);
+        ArrayList<Map> path1 = mapper.convertValue(response.get("results").get(0).get("data").get(0).get("row").get(0), ArrayList.class);
+        assertEquals("answer_stop1", path1.get(path1.size() - 1).get("id"));
+    }
+
+    private static final Map QUERY4 =
+            singletonMap("statements", singletonList(singletonMap("statement",
+                    "CALL fr.zaki.traverse.DecisionTreeExpression('bar entrance', {gender:'male', age:'23', age_stop1:'41'}) yield path return path")));
+    @Test
+    public void testTraversalNotPassOver60() throws Exception {
+        HTTP.Response response = HTTP.POST(neo4j.httpURI().resolve("/db/data/transaction/commit").toString(), QUERY5);
+        int count = response.get("results").get(0).get("data").size();
+        assertEquals(1, count);
+        ArrayList<Map> path1 = mapper.convertValue(response.get("results").get(0).get("data").get(0).get("row").get(0), ArrayList.class);
+        assertEquals("no", path1.get(path1.size() - 1).get("id"));
+    }
+
+    private static final Map QUERY5 =
+            singletonMap("statements", singletonList(singletonMap("statement",
+                    "CALL fr.zaki.traverse.DecisionTreeExpression('bar entrance', {gender:'male', age:'23', age_stop2:'41'}) yield path return path")));
 
     private static final String MODEL_STATEMENT =
-            "CREATE (root:Tree { id: 'bar entrance' })" +
-                    "CREATE (over21_rule:Rule { parameters: 'age', types:'int', expression:'age >= 21' })" +
-                    "CREATE (gender_rule:Rule { parameters: 'age,gender', types:'int,String', expression:'(age >= 18) && gender.equals(\"female\")' })" +
-                    "CREATE (answer_yes:Node { id: 'yes' })" +
-                    "CREATE (answer_no:Node { id: 'no' })" +
-                    "CREATE (root)-[:HAS]->(over21_rule)" +
-                    "CREATE (over21_rule)-[:IS_TRUE]->(answer_yes)" +
-                    "CREATE (over21_rule)-[:IS_FALSE]->(gender_rule)" +
-                    "CREATE (gender_rule)-[:IS_TRUE]->(answer_yes)" +
-                    "CREATE (gender_rule)-[:IS_FALSE]->(answer_no)";
+        "CREATE (root:Tree { id: 'bar entrance' })" +
+        "CREATE (over21_rule:Rule { parameters: 'age', types:'int', expression:'age >= 21' })" +
+        "CREATE (gender_rule:Rule { parameters: 'age,gender', types:'int,String', expression:'(age >= 18) && gender.equals(\"female\")' })" +
+        "CREATE (answer_stop1_rule:Rule { parameters: 'age_stop1', types:'int', expression:'age_stop1 >= 40' })" +
+        "CREATE (answer_stop2_rule:Rule { parameters: 'age_stop2', types:'int', expression:'age_stop2 >= 60' })" +
+
+        "CREATE (answer_yes:Node { id: 'yes' })" +
+        "CREATE (answer_stop0:Node { id: 'stop0', parameters: 'age_stop1,age_stop2', types:'int,int' })" +
+        "CREATE (answer_stop1:Node { id: 'answer_stop1' })" +
+        "CREATE (answer_stop2:Node { id: 'answer_stop2' })" +
+        "CREATE (answer_no:Node { id: 'no' })" +
+        
+        "CREATE (root)-[:HAS]->(over21_rule)" +
+        "CREATE (answer_stop0)-[:HAS]->(answer_stop1_rule)" +
+        "CREATE (answer_stop0)-[:HAS]->(answer_stop2_rule)" +
+
+        "CREATE (over21_rule)-[:IS_TRUE]->(answer_stop0)" +
+        "CREATE (over21_rule)-[:IS_FALSE]->(gender_rule)" +
+        "CREATE (gender_rule)-[:IS_TRUE]->(answer_yes)" +
+        "CREATE (gender_rule)-[:IS_FALSE]->(answer_no)" +
+
+        "CREATE (answer_stop1_rule)-[:IS_TRUE]->(answer_stop1)" +
+        "CREATE (answer_stop1_rule)-[:IS_FALSE]->(answer_no)" +
+        "CREATE (answer_stop2_rule)-[:IS_TRUE]->(answer_stop2)" +
+        "CREATE (answer_stop2_rule)-[:IS_FALSE]->(answer_no)";
 }

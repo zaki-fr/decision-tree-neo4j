@@ -24,7 +24,7 @@ public class DecisionTreeExpanderScript extends DecisionTreeBase implements Path
 
     @Override
     public Iterable<Relationship> expand(Path path, BranchState<Object> branchState) {
-        // If we get to an Node or Transit, stop traversing, we found a valid path.
+        // If we get to a Node without required parameters stop traversing, we found a valid path.
         if (path.endNode().hasLabel(Labels.Node)) {
             try {
                 if (shouldEnd(path.endNode())) {
