@@ -1,6 +1,6 @@
 # Decision Trees With Rules
 
-[![Build Status](https://travis-ci.org/zaki-fr/decision-tree-core.svg?branch=master)](https://travis-ci.org/zaki-fr/decision-tree-core)
+[![Build Status](https://travis-ci.org/zaki-fr/decision-tree-core.svg?branch=master)](https://travis-ci.org/zaki-fr/decision-tree-neo4j)
 
 ***This project is branched from https://github.com/maxdemarzi/decision_trees_with_rules***
 
@@ -13,7 +13,7 @@ This project uses maven, to build a jar-file with the procedure in this project,
 
     mvn clean install
 
-This will produce a jar-file, `target/decision-tree-core-1.0.1-SNAPSHOT.jar`,
+This will produce a jar-file, `target/decision-tree-neo4j-1.0.1-SNAPSHOT.jar`,
 
 Start neo4j server and its plugins using docker
 
